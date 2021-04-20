@@ -4,6 +4,9 @@ import Head from 'next/head';
 
 import Link from 'next/link';
 import { FaUser, FaCalendar } from 'react-icons/fa';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+import { useState } from 'react';
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 import { getPrismicClient } from '../services/prismic';
@@ -27,11 +30,25 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home({ posts }: HomeProps) {
+export default function Home({ postsPagination }: HomeProps): JSX.Element {
+  const { results, next_page } = postsPagination;
+
+  const resultsFormated = results.map(result => ({
+    ...result,
+    first_publication_date: format(
+      new Date(result.first_publication_date),
+      "dd MMM' 'yyyy",
+      {
+        locale: ptBR,
+      }
+    ),
+  }));
+
+  const [posts, setPosts] = useState<Post[]>(resultsFormated);
   return (
     <>
       <Head>
-        <title>Posts | SpaceTraveling</title>
+        <title>Home | SpaceTraveling</title>
       </Head>
 
       <main className={styles.container}>
@@ -47,6 +64,7 @@ export default function Home({ posts }: HomeProps) {
 
                   <FaUser className={styles.lastChild} />
                   <span>{post.data.author}</span>
+                  {next_page !== null && <button>Teste</button>}
                 </div>
               </a>
             </Link>
@@ -62,31 +80,34 @@ export const getStaticProps: GetStaticProps = async () => {
     [Prismic.predicates.at('document.type', 'posts')],
     {
       fetch: ['post.title', 'post.content'],
-      pageSize: 100,
+      pageSize: 20,
     }
   );
 
   const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,
+      first_publication_date: post.first_publication_date,
+
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
         author: post.data.author,
       },
-      first_publication_date: new Date(
-        post.first_publication_date
-      ).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'numeric',
-        year: 'numeric',
-      }),
     };
   });
 
+  const postsPagination = {
+    posts,
+    next_page: postsResponse.next_page,
+  };
+
+  console.log(postsPagination);
+
   return {
     props: {
-      posts,
+      postsPagination,
     },
+    revalidate: 60 * 30,
   };
 };
