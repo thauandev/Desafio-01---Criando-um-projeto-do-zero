@@ -60,3 +60,21 @@
     }
   }
 }
+
+.nextPageContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-self: start;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  button {
+    margin-top: 5rem;
+    margin-left: 8.5rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #ff57b2;
+    font-weight: 600;
+  }
+}

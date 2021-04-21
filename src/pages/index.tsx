@@ -30,6 +30,29 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
+function FormatPosts(posts: PostPagination): Post[] {
+  const newPostsFormatted = posts.results.map(post => {
+    return {
+      uid: post.uid,
+      first_publication_date: format(
+        new Date(post.first_publication_date),
+        "dd MMM' 'yyyy",
+        {
+          locale: ptBR,
+        }
+      ),
+
+      data: {
+        title: post.data.title as string,
+        subtitle: post.data.subtitle as string,
+        author: post.data.author as string,
+      },
+    };
+  });
+
+  return newPostsFormatted;
+}
+
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
   const { results, next_page } = postsPagination;
 
@@ -45,6 +68,18 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
   }));
 
   const [posts, setPosts] = useState<Post[]>(resultsFormated);
+  const [nextPage, setNextPage] = useState(next_page);
+
+  async function loadMorePostsButton(): Promise<void> {
+    const nextPosts = await fetch(next_page);
+
+    const nextPostsJSON = await nextPosts.json();
+
+    const newPostsFormatted = FormatPosts(nextPostsJSON);
+
+    setPosts([...posts, ...newPostsFormatted]);
+    setNextPage(nextPostsJSON.nextPage);
+  }
   return (
     <>
       <Head>
@@ -72,12 +107,23 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
 
                   <FaUser className={styles.lastChild} />
                   <span>{post.data.author}</span>
-                  {next_page !== null && <button>Carregar mais posts</button>}
                 </div>
               </a>
             </Link>
           ))}
         </div>
+
+        {nextPage && (
+          <div className={styles.nextPageContainer}>
+            <button
+              className={styles.loadButton}
+              type="button"
+              onClick={() => loadMorePostsButton()}
+            >
+              Carregar mais posts
+            </button>
+          </div>
+        )}
       </main>
     </>
   );
@@ -88,7 +134,7 @@ export const getStaticProps: GetStaticProps = async () => {
     [Prismic.predicates.at('document.type', 'posts')],
     {
       fetch: ['post.title', 'post.content'],
-      pageSize: 20,
+      pageSize: 1,
     }
   );
 
