@@ -51,6 +51,14 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         <title>Home | SpaceTraveling</title>
       </Head>
 
+      <header className={commonStyles.header}>
+        <Link href="/">
+          <a>
+            <img src="/logo.svg" alt="logo" />
+          </a>
+        </Link>
+      </header>
+
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map(post => (
@@ -64,7 +72,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
 
                   <FaUser className={styles.lastChild} />
                   <span>{post.data.author}</span>
-                  {next_page !== null && <button>Teste</button>}
+                  {next_page !== null && <button>Carregar mais posts</button>}
                 </div>
               </a>
             </Link>
@@ -98,7 +106,7 @@ export const getStaticProps: GetStaticProps = async () => {
   });
 
   const postsPagination = {
-    posts,
+    results: posts,
     next_page: postsResponse.next_page,
   };
 
