@@ -97,7 +97,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
       <main className={styles.container}>
         <div className={styles.posts}>
           {posts.map(post => (
-            <Link href={`/posts/${post.uid}`}>
+            <Link href={`/post/${post.uid}`}>
               <a key={post.uid}>
                 <strong>{post.data.title}</strong>
                 <p>{post.data.subtitle}</p>
@@ -155,8 +155,6 @@ export const getStaticProps: GetStaticProps = async () => {
     results: posts,
     next_page: postsResponse.next_page,
   };
-
-  console.log(postsPagination);
 
   return {
     props: {
