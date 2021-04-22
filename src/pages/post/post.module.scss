@@ -1,1 +1,49 @@
-// TODO
+.container {
+  img {
+    width: 100%;
+  }
+
+  .postContainer {
+    max-width: 720px;
+    margin: 5rem auto 5rem;
+
+    strong {
+      font-weight: bold;
+      font-size: 2.5rem;
+
+      letter-spacing: -0.5px;
+    }
+
+    .tagContainer {
+      margin: 1rem 0 3rem;
+
+      span {
+        margin-left: 1rem;
+        color: #bbbbbb;
+      }
+
+      svg {
+        color: #bbbbbb;
+      }
+
+      .lastChild {
+        margin-left: 1rem;
+      }
+    }
+    h2 {
+      margin-bottom: 2rem;
+      font-weight: bold;
+      font-size: 36px;
+      line-height: 140%;
+      color: var(--heading);
+
+      &:last-of-type {
+        margin-top: 2rem;
+      }
+    }
+
+    .content {
+      line-height: 2rem;
+    }
+  }
+}

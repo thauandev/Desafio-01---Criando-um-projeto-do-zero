@@ -1,5 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { RichText } from 'prismic-dom';
+import { FaUser, FaCalendar, FaClock } from 'react-icons/fa';
 
 import Prismic from '@prismicio/client';
 
@@ -78,19 +79,23 @@ export default function Post({ post }: PostProps): JSX.Element {
   return (
     <>
       <Header />
-      <div>
+      <div className={styles.container}>
         <img src={banner.url} alt="Banner" />
-        <div>
+        <div className={styles.postContainer}>
           <strong>{title}</strong>
-          <div>
+          <div className={styles.tagContainer}>
+            <FaUser />
             <span>{author}</span>
+            <FaCalendar className={styles.lastChild} />
             <span>{dateFormated}</span>
+            <FaClock className={styles.lastChild} />
             <span>{`${averageString} min`}</span>
           </div>
           {content.map(section => (
             <section key={section.heading}>
               <h2>{section.heading}</h2>
               <div
+                className={styles.content}
                 dangerouslySetInnerHTML={{
                   __html: RichText.asHtml(section.body),
                 }}
